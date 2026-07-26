@@ -1,4 +1,4 @@
-name: Enterprise AWS Three-Tier Deployment Pipeline
+name: Mindcircuit Book Store AWS Deployment Pipeline
 
 on:
   push:
@@ -28,11 +28,11 @@ jobs:
       - name: Install & Test App Dependencies
         run: |
           cd app/api
-          npm ci
+          npm install
           npm test
 
       - name: Infrastructure Security Audit (IaC Scan)
-        uses: bridgecrewio/checkov-action@master
+        uses: bridgecrewio/checkov-action@v12.2811.0
         continue-on-error: true
         with:
           directory: infrastructure/
@@ -40,7 +40,7 @@ jobs:
           soft_fail: true
 
   deploy-staging:
-    name: Deploy to Staging ASG
+    name: Deploy to Staging ASGs
     needs: lint-and-scan
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
         id: check_aws
         run: |
           if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
-            echo "AWS Credentials missing. Deployment job skipped gracefully."
+            echo "AWS Credentials missing. Skipping instance refresh step gracefully."
             echo "has_credentials=false" >> $GITHUB_OUTPUT
           else
             echo "AWS Credentials detected."
@@ -67,9 +67,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Trigger Rolling Instance Refresh
+      - name: Trigger Rolling Instance Refresh (FE-ASG & BE-ASG)
         if: steps.check_aws.outputs.has_credentials == 'true'
         run: |
           aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name banking-web-asg \
-            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}'
+            --auto-scaling-group-name FE-ASG \
+            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}' || true
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name BE-ASG \
+            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}' || true
