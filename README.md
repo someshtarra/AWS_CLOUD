@@ -15,6 +15,8 @@
 ### 📋 Monograph & System Metadata
 | Property | Specification Value |
 | :--- | :--- |
+| **Thesis Title** | **Architectural Design, Formal Specification, and Production Implementation of an Elastic Multi-Tier Infrastructure on Amazon Web Services** |
+| **Document Format** | **19-Page Technical Monograph & Master's Thesis** |
 | **Author** | **Tarra Someswararao** |
 | **AWS System Account ID** | `595028889753` (`us-east-1`) |
 | **Target Production Domain** | `rebel7781.xyz` |
@@ -22,19 +24,20 @@
 | **Frontend Endpoint** | `https://virat.rebel7781.xyz` |
 | **Backend API Endpoint** | `https://api.rebel7781.xyz` |
 | **Internal DB CNAME** | `book.rds.com` (Route 53 Private Zone `rds.com`) |
-| **Release Status** | **Approved for Production Release (July 2026)** |
+| **Publication Date** | **July 2026** |
+| **Release Status** | **Approved for Production Release** |
 
 ---
 
 </div>
 
 > [!IMPORTANT]
-> **Production Thesis Monograph Specification**: This repository represents the formal implementation of the 19-page Master's Thesis monograph titled **"Architectural Design, Formal Specification, and Production Implementation of an Elastic Multi-Tier Infrastructure on Amazon Web Services"** authored by **Tarra Someswararao** (AWS Account ID: `595028889753`, us-east-1).
+> **Production Thesis Monograph Reference**: This entire repository is engineered strictly based on the formal 19-page thesis document titled **"Architectural Design, Formal Specification, and Production Implementation of an Elastic Multi-Tier Infrastructure on Amazon Web Services"** authored by **Tarra Someswararao** (AWS System Account ID: `595028889753`, Region: `us-east-1`, Published: July 2026).
 
 ---
 
 ## 📌 Table of Contents
-- [📖 Executive Abstract](#-executive-abstract)
+- [📖 Executive Abstract & Thesis Overview](#-executive-abstract--thesis-overview)
 - [Key Architectural Contributions](#-key-architectural-contributions)
 - [📐 Architecture Diagram & Network Topology](#-architecture-diagram--network-topology)
 - [🎯 Architectural Requirements & Constraints](#-architectural-requirements--constraints)
@@ -51,9 +54,11 @@
 
 ---
 
-## 📖 Executive Abstract
+## 📖 Executive Abstract & Thesis Overview
 
-Modern cloud computing paradigms demand highly scalable, fault-tolerant, and securely isolated infrastructure topologies to support mission-critical enterprise workloads. This repository presents the definitive, end-to-end architectural framework and operational implementation of an enterprise-grade **3-Tier Web Architecture hosted on Amazon Web Services (AWS)**. The system is engineered from foundational networking primitives up to an active production state, deploying a dynamic database-driven web application titled **'Mindcircuit Book Store'**.
+Modern cloud computing paradigms demand highly scalable, fault-tolerant, and securely isolated infrastructure topologies to support mission-critical enterprise workloads. This repository presents the definitive, end-to-end architectural framework and operational implementation of an enterprise-grade **3-Tier Web Architecture hosted on Amazon Web Services (AWS)** specified in the 19-page master's thesis document **"Architectural Design, Formal Specification, and Production Implementation of an Elastic Multi-Tier Infrastructure on Amazon Web Services"** by **Tarra Someswararao**.
+
+The system is engineered from foundational networking primitives up to an active production state, deploying a dynamic database-driven web application titled **'Mindcircuit Book Store'**.
 
 The architectural lifecycle spans **34 distinct operational steps** grouped into four primary phases:
 1. **Base VPC Network Infrastructure Provisioning**
