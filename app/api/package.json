@@ -1,7 +1,7 @@
 {
-  "name": "banking-api-service",
+  "name": "mindcircuit-bookstore-api",
   "version": "1.0.0",
-  "description": "Enterprise Banking Platform - Backend API Service Engine",
+  "description": "Mindcircuit Book Store - Backend Express API Service Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,13 +9,16 @@
   },
   "keywords": [
     "aws",
-    "banking",
-    "api",
-    "nodejs"
+    "3-tier-architecture",
+    "mindcircuit",
+    "bookstore",
+    "express",
+    "mysql"
   ],
-  "author": "Enterprise Cloud DevOps Engineering Team",
+  "author": "Tarra Someswararao",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mysql2": "^3.6.0"

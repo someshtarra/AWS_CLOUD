@@ -1,32 +1,58 @@
 #!/bin/bash
 # ==============================================================================
-# Enterprise AWS Three-Tier Architecture - Backend Launch Template User Data
-# Component: Backend Application Tier (Node.js API + MySQL Client + PM2)
-# OS: Ubuntu Linux | Process Name: backendapi
+# Enterprise AWS Three-Tier Architecture - Backend UserData Script
+# Component: Backend Application Tier (Node.js API + PM2 + MySQL Client)
+# DB Endpoint: book.rds.com (Private Hosted Zone rds.com)
+# Process Name: backendapi | Author: Tarra Someswararao
 # ==============================================================================
 
 set -euo pipefail
 exec > >(tee /var/log/user-data-app.log|logger -t user-data-app -s 2>/dev/console) 2>&1
 
-echo "[INFO] Executing Backend Launch Template User Data at $(date)..."
+echo "[INFO] Executing Backend Application Tier UserData Script at $(date)..."
 
 # 1. Update OS Package Index
 sudo apt update -y
 
-# 2. Configure PM2 Systemd Service Management
-sudo pm2 startup || true
-sudo env PATH=$PATH:/usr/bin /usr/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu || true
-sudo systemctl start pm2-root || true
-sudo systemctl enable pm2-root || true
+# 2. Install Node.js 18.x Runtime Environment
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt update -y
 
-# 3. Install MySQL Client Tools for DB Seeding & Connectivity
+# 3. Enable Corepack & Install PM2 Process Manager
+sudo npm install -g corepack
+corepack enable
+corepack prepare yarn@stable --activate
+sudo npm install -g pm2
+
+# 4. Clone Application Repository
+cd /tmp
+git clone https://github.com/jadalaramani/aws_three_tier_code.git
+cd aws_three_tier_code/backend
+
+# 5. Inject Database Connection Environment Variables (.env)
+cat << 'EOF' > .env
+DB_HOST=book.rds.com
+DB_USERNAME=admin
+DB_PASSWORD="Somesh12345"
+PORT=3306
+EOF
+
+# 6. Install Node.js Dependencies & Database Drivers
+npm install
+npm install dotenv
+npm install mysql2
+
+# 7. Install MySQL Client for Database Management
 sudo apt install mysql-server -y
 
-# 4. Navigate to Backend Repository Directory & Start Process via PM2
-cd /home/ubuntu/aws_three_tier_code/backend
-sudo pm2 start index.js --name "backendapi" || sudo pm2 restart backendapi
+# 8. Start Backend Service via PM2 Process Manager
+pm2 start index.js --name "backendapi"
+pm2 startup || true
+sudo env PATH=$PATH:/usr/bin /usr/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu || true
+pm2 save
 
-# 5. Restore & Seed Database Schema to RDS MySQL
-mysql -h book.rds.com -u admin -pSomesh12345 test < test.sql || echo "[WARN] DB restoration executed or pending network binding"
+# 9. Seed/Restore Initial Database Schema to Private RDS Instance
+mysql -h book.rds.com -u admin -pSomesh12345 test < test.sql || echo "[WARN] Database seeding pending private endpoint binding"
 
-echo "[SUCCESS] Backend Service (backendapi) Provisioned & Database Seeded at $(date)!"
+echo "[SUCCESS] Backend Service (backendapi) Successfully Provisioned at $(date)!"

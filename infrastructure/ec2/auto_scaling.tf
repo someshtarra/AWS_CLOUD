@@ -1,54 +1,89 @@
 # ==============================================================================
-# Enterprise AWS Three-Tier Architecture - Auto Scaling Group (ASG) & Launch Templates
+# Enterprise AWS Three-Tier Architecture - Auto Scaling Group & Launch Templates
+# Launch Templates: frontend-LT (ami-0e826fcb0c13a348), backend-LT (ami-0cf2ba10137800b5a)
+# Auto Scaling Groups: FE-ASG, BE-ASG | Author: Tarra Someswararao
 # ==============================================================================
 
-resource "aws_launch_template" "web_template" {
-  name_prefix   = "banking-web-template-"
-  image_id      = "ami-0c55b159cbfafe1f0"
-  instance_type = "t3.medium"
+# ------------------------------------------------------------------------------
+# 1. Frontend Launch Template & Auto Scaling Group (frontend-LT / FE-ASG)
+# ------------------------------------------------------------------------------
+resource "aws_launch_template" "frontend_template" {
+  name_prefix   = "frontend-LT-"
+  image_id      = "ami-0e826fcb0c13a348" # Golden frontend-AMI
+  instance_type = "t3.micro"
 
   user_data = filebase64("${path.module}/../scripts/user_data_web.sh")
 
-  iam_instance_profile {
-    name = var.ec2_ssm_profile_name
-  }
-
   network_interfaces {
     associate_public_ip_address = false
-    security_groups             = [var.web_sg_id]
+    security_groups             = [var.frontend_ec2_sg_id]
   }
 
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name        = "banking-web-node"
+      Name        = "FE-ASG-node"
       Environment = "production"
     }
   }
 }
 
-resource "aws_autoscaling_group" "web_asg" {
-  name                = "banking-web-asg"
-  vpc_zone_identifier = [var.private_web_2a_id, var.private_web_2b_id]
-  target_group_arns   = [var.web_target_group_arn]
+resource "aws_autoscaling_group" "fe_asg" {
+  name                = "FE-ASG"
+  vpc_zone_identifier = [var.pvt_sn_3a_id, var.pvt_sn_4b_id]
+  target_group_arns   = [var.frontend_target_group_arn]
 
-  min_size         = 2
-  max_size         = 10
-  desired_capacity = 2
+  min_size         = 1
+  max_size         = 3
+  desired_capacity = 1
 
   health_check_type         = "ELB"
   health_check_grace_period = 300
 
   launch_template {
-    id      = aws_launch_template.web_template.id
+    id      = aws_launch_template.frontend_template.id
     version = "$Latest"
   }
+}
 
-  instance_refresh {
-    strategy = "Rolling"
-    preferences {
-      min_healthy_percentage = 50
-      instance_warmup        = 300
+# ------------------------------------------------------------------------------
+# 2. Backend Launch Template & Auto Scaling Group (backend-LT / BE-ASG)
+# ------------------------------------------------------------------------------
+resource "aws_launch_template" "backend_template" {
+  name_prefix   = "backend-LT-"
+  image_id      = "ami-0cf2ba10137800b5a" # Golden backend-AMI
+  instance_type = "t3.micro"
+
+  user_data = filebase64("${path.module}/../scripts/user_data_app.sh")
+
+  network_interfaces {
+    associate_public_ip_address = false
+    security_groups             = [var.backend_ec2_sg_id]
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name        = "BE-ASG-node"
+      Environment = "production"
     }
+  }
+}
+
+resource "aws_autoscaling_group" "be_asg" {
+  name                = "BE-ASG"
+  vpc_zone_identifier = [var.pvt_sn_3a_id, var.pvt_sn_4b_id]
+  target_group_arns   = [var.backend_target_group_arn]
+
+  min_size         = 1
+  max_size         = 3
+  desired_capacity = 1
+
+  health_check_type         = "ELB"
+  health_check_grace_period = 300
+
+  launch_template {
+    id      = aws_launch_template.backend_template.id
+    version = "$Latest"
   }
 }

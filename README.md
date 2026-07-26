@@ -1,124 +1,76 @@
 <div align="center">
 
-# 📚 MindCircuit Book Store – AWS 3-Tier Architecture
-### 🚀 Production-Ready Three-Tier Cloud Infrastructure
+# 📚 Mindcircuit Book Store – AWS 3-Tier Architecture
+### 🚀 Architectural Design, Formal Specification, and Production Implementation of an Elastic Multi-Tier Infrastructure on Amazon Web Services
 
 [![AWS Architecture](https://img.shields.io/badge/AWS-3--Tier_Architecture-ff9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-[![DevOps Ready](https://img.shields.io/badge/DevOps-Production_Grade-0052cc?style=for-the-badge&logo=azure-devops&logoColor=white)](https://aws.amazon.com/devops/)
+[![AWS Region](https://img.shields.io/badge/AWS_Region-us--east--1-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
 [![High Availability](https://img.shields.io/badge/Availability-99.99%25_Multi--AZ-00d26a?style=for-the-badge&logo=statuspage&logoColor=white)](#high-availability-design)
-[![Security Compliance](https://img.shields.io/badge/Security-Private_Subnets_&_NACL-red?style=for-the-badge&logo=shield&logoColor=white)](#security-architecture)
-[![IaC Ready](https://img.shields.io/badge/IaC-Terraform_&_CloudFormation-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)](#future-improvements)
+[![Zero-Trust Security](https://img.shields.io/badge/Security-Zero--Trust_Private_Subnets-red?style=for-the-badge&logo=shield&logoColor=white)](#security-architecture)
+[![IaC Ready](https://img.shields.io/badge/IaC-Terraform_&_CloudFormation-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)](#infrastructure-as-code)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 ---
 
-![MindCircuit Book Store AWS 3-Tier Architecture Banner](assets/aws_banner.png)
+### 📋 Monograph & System Metadata
+| Property | Specification Value |
+| :--- | :--- |
+| **Author** | **Tarra Someswararao** |
+| **AWS System Account ID** | `595028889753` (`us-east-1`) |
+| **Target Production Domain** | `rebel7781.xyz` |
+| **Application Title** | **Mindcircuit Book Store** |
+| **Frontend Endpoint** | `https://virat.rebel7781.xyz` |
+| **Backend API Endpoint** | `https://api.rebel7781.xyz` |
+| **Internal DB CNAME** | `book.rds.com` (Route 53 Private Zone `rds.com`) |
+| **Release Status** | **Approved for Production Release (July 2026)** |
+
+---
 
 </div>
 
----
-
 ## 📌 Table of Contents
-- [📖 Project Overview](#-project-overview)
-- [⚡ Quickstart & Repository Setup](#-quickstart--repository-setup)
-- [📐 Architecture Diagram](#-architecture-diagram)
-- [🛠️ AWS Services Used](#%EF%B8%8F-aws-services-used)
-- [🌐 Network Architecture](#-network-architecture)
-- [⚡ High Availability Design](#-high-availability-design)
-- [🔒 Security Architecture](#-security-architecture)
-- [💾 Storage Layer](#-storage-layer)
-- [📊 Monitoring & Observability](#-monitoring--observability)
-- [🚀 Deployment Workflow](#-deployment-workflow)
-- [💻 AWS CLI Commands](#-aws-cli-commands)
-- [🐧 Linux Administration](#-linux-administration)
-- [🔧 DevOps Troubleshooting](#-devops-troubleshooting)
-- [🔍 Common Linux Troubleshooting](#-common-linux-troubleshooting)
-- [📂 Folder Structure](#-folder-structure)
-- [⭐ Key Features](#-key-features)
-- [🧠 Skills Demonstrated](#-skills-demonstrated)
-- [🔮 Future Improvements](#-future-improvements)
+- [📖 Executive Abstract](#-executive-abstract)
+- [Key Architectural Contributions](#-key-architectural-contributions)
+- [📐 Architecture Diagram & Network Topology](#-architecture-diagram--network-topology)
+- [🎯 Architectural Requirements & Constraints](#-architectural-requirements--constraints)
+- [🔬 34-Step Procedural Lifecycle Specification](#-34-step-procedural-lifecycle-specification)
+  - [Phase 1: Base VPC Network Infrastructure Provisioning](#phase-1-base-vpc-network-infrastructure-provisioning)
+  - [Phase 2: Layered Security & Traffic Ingress Management](#phase-2-layered-security--traffic-ingress-management)
+  - [Phase 3: Database, Staging Compute & Auto Scaling Infrastructure](#phase-3-database-staging-compute--auto-scaling-infrastructure)
+  - [Phase 4: Private DNS Mapping & Dynamic System Validation](#phase-4-private-dns-mapping--dynamic-system-validation)
+- [🛠️ AWS Services Inventory & Micro-Segmented Security](#%EF%B8%8F-aws-services-inventory--micro-segmented-security)
+- [📜 UserData & Boot Automation Scripts](#-userdata--boot-automation-scripts)
+- [🔧 DevOps & Operational Troubleshooting Runbook](#-devops--operational-troubleshooting-runbook)
+- [📂 Repository Directory Structure](#-repository-directory-structure)
+- [🧠 Enterprise Skills Demonstrated](#-enterprise-skills-demonstrated)
 
 ---
 
-## 📖 Project Overview
+## 📖 Executive Abstract
 
-This repository demonstrates the deployment of a **highly available, secure, scalable, fault-tolerant, and production-grade MindCircuit Book Store application on AWS** using a strict **Three-Tier Architecture** following DevOps best practices and the **AWS Well-Architected Framework**.
+Modern cloud computing paradigms demand highly scalable, fault-tolerant, and securely isolated infrastructure topologies to support mission-critical enterprise workloads. This repository presents the definitive, end-to-end architectural framework and operational implementation of an enterprise-grade **3-Tier Web Architecture hosted on Amazon Web Services (AWS)**. The system is engineered from foundational networking primitives up to an active production state, deploying a dynamic database-driven web application titled **'Mindcircuit Book Store'**.
 
-The application is deployed inside a dedicated **Amazon VPC (`10.20.0.0/16`)** spanned across two Availability Zones (`us-east-1a` and `us-east-1b`):
+The architectural lifecycle spans **34 distinct operational steps** grouped into four primary phases:
+1. **Base VPC Network Infrastructure Provisioning**
+2. **Layered Security & Traffic Ingress Management**
+3. **Automated Compute Fleet & Database Provisioning via Immutable Golden AMIs and Auto Scaling Groups**
+4. **Abstracted Private DNS Interconnectivity and End-to-End Dynamic System Validation**
 
-1. **Presentation Tier (Frontend)**: React + Apache web servers hosted in Private Subnets (`10.20.3.0/24` & `10.20.4.0/24`), fronted by **Frontend ALB** and public DNS endpoint **`virat.rebel7781.xyz`**.
-2. **Application Tier (Backend)**: Node.js + Express + PM2 API services hosted in Private Subnets (`10.20.5.0/24` & `10.20.6.0/24`), fronted by **Backend ALB** and public API endpoint **`api.rebel7781.xyz`**.
-3. **Database Tier (Data)**: Amazon RDS MySQL Multi-AZ Database Cluster (DB Name: `test`) isolated in Private Subnets (`10.20.7.0/24` & `10.20.8.0/24`), resolved internally via Private Hosted Zone endpoint **`book.rbs.com`**.
-
----
-
-## ⚡ Quickstart & User Data Provisioning
-
-### 1. Backend Application Tier Setup (`backend`)
-```bash
-# Clone application repository (Primary or Bank Portal Mirror)
-git clone https://github.com/jadalaramani/aws_three_tier_code.git
-# OR
-git clone https://github.com/someshtarra/bank_portal.git
-
-cd aws_three_tier_code/backend # or cd bank_portal/backend
-
-# Configure Environment Variables (.env)
-cat << 'EOF' > .env
-DB_HOST=book.rds.com
-DB_USERNAME=admin
-DB_PASSWORD="Somesh12345"
-PORT=3306
-EOF
-
-# Install dependencies
-npm install
-npm install dotenv
-npm install mysql2
-
-# Start Backend API Service via PM2
-sudo pm2 start index.js --name "backendapi"
-```
-
-### 2. Frontend Launch Template User Data Script (`user_data_web.sh`)
-```bash
-#!/bin/bash
-sudo apt update -y
-sleep 90
-sudo systemctl start apache2.service
-```
-
-### 3. Backend Launch Template User Data Script (`user_data_app.sh`)
-```bash
-#!/bin/bash
-sudo apt update -y
-sudo pm2 startup
-sudo env PATH=$PATH:/usr/bin /usr/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
-sudo systemctl start pm2-root
-sudo systemctl enable pm2-root
-sudo apt install mysql-server -y
-
-# Navigate to backend directory & start process
-cd /home/ubuntu/aws_three_tier_code/backend
-sudo pm2 start index.js --name "backendapi"
-
-# Seed Database Schema & Data to RDS MySQL Cluster
-mysql -h book.rds.com -u admin -pSomesh12345 test < test.sql
-```
-
-### 4. Amazon RDS MySQL Configuration
-- **Engine**: MySQL 8.0 Multi-AZ
-- **Database Name**: `test`
-- **Master Username**: `admin`
-- **Master Password**: `"Somesh12345"`
-- **Endpoint**: `book.rds.com` (Private Hosted Zone)
-- **Database Restoration**: `mysql -h book.rds.com -u admin -pSomesh12345 test < test.sql`
+Through rigorous isolation of public web ingress, private application compute, and non-routable relational database subnets across multiple Availability Zones, the architecture achieves zero public exposure of database endpoints while guaranteeing automated self-healing and horizontal elasticity under load.
 
 ---
 
-## 📐 Architecture Diagram
+## ✨ Key Architectural Contributions
 
-### 🏗️ MindCircuit Book Store - AWS 3-Tier Network Topology
+- 📋 **Formal 34-Step Lifecycle Specification**: Complete procedural blueprint detailing exact subnet allocations, route table associations, security group rules, load balancer target groups, and Route 53 DNS mappings.
+- 🛡️ **Zero-Trust Network Isolation**: Network Access Control Lists (NACLs) and stateful Security Group chaining restricting lateral movement between tiers.
+- 🗺️ **Abstracted Internal Service Discovery**: Deployment of Route 53 Private Hosted Zones (`rds.com`) mapping human-readable CNAME records (`book.rds.com`) to dynamic RDS endpoints, eliminating hardcoded infrastructure strings.
+- 🔄 **Automated Elastic Compute Lifecycle**: Immutable image creation pipelines (Golden AMIs `frontend-AMI` & `backend-AMI`) backing Auto Scaling Launch Templates to maintain identical state across dynamic scale-out events.
+- 🧪 **Empirical Verification**: End-to-end live testing validating full CRUD operations from browser clients (`virat.rebel7781.xyz`) down to persistent MySQL database tables.
+
+---
+
+## 📐 Architecture Diagram & Network Topology
 
 ```
                                       +--------------------------------------------------------+
@@ -136,332 +88,304 @@ mysql -h book.rds.com -u admin -pSomesh12345 test < test.sql
                                                                   |
                                                                   v
                                       +--------------------------------------------------------+
-                                      |               INTERNET GATEWAY (IGW)                   |
+                                      |               INTERNET GATEWAY (3tier-igw)             |
                                       +---------------------------+----------------------------+
                                                                   |
   ================================================================|===============================================================
-  VPC: 10.20.0.0/16                                               v
+  VPC: 3tier-vpc (10.20.0.0/16 | vpc-00d8d6beb7dcedcc4)            v
   ================================================================================================================================
   
         +----------------------------------------------------+        +----------------------------------------------------+
         | AVAILABILITY ZONE A (us-east-1a)                   |        | AVAILABILITY ZONE B (us-east-1b)                   |
         +----------------------------------------------------+        +----------------------------------------------------+
         
-  --- [ PUBLIC SUBNET 10.20.1.0/24 (AZ-a) ] ------------------        --- [ PUBLIC SUBNET 10.20.2.0/24 (AZ-b) ] ------------------
+  --- [ PUBLIC SUBNET 10.20.1.0/24 (pub-sn-1a) ] -------------        --- [ PUBLIC SUBNET 10.20.2.0/24 (pub-sn-2b) ] -------------
   |                                                          |        |                                                          |
-  |   +-------------------+          +-------------------+   |        |   +-------------------+          +-------------------+   |
-  |   | Frontend ALB      |          | NAT Gateway (AZ-a)|   |        |   | Frontend ALB      |          | NAT Gateway (AZ-b)|   |
-  |   +---------+---------+          +---------+---------+   |        |   +---------+---------+          +---------+---------+   |
-  ----------------|----------------------------|--------------        --------------|----------------------------|--------------
-                  |                            |                                    |                            |
-                  v                            |                                    v                            |
-  --- [ PRESENTATION TIER (FRONTEND) PRIVATE SUBNET ] -------        --- [ PRESENTATION TIER (FRONTEND) PRIVATE SUBNET ] -------
-  | Private Subnet: 10.20.3.0/24 (AZ-a)                      |        | Private Subnet: 10.20.4.0/24 (AZ-b)                      |
+  |   +-------------------+          +-------------------+   |        |   +-------------------+                                  |
+  |   | Frontend ALB      |          | 3tier-NAT Gateway |   |        |   | Frontend ALB      |                                  |
+  |   +---------+---------+          +---------+---------+   |        |   +---------+---------+                                  |
+  ----------------|----------------------------|--------------        --------------|---------------------------------------------
+                  |                            |                                    |
+                  v                            v                                    v
+  --- [ PRESENTATION TIER PRIVATE SUBNETS ] ------------------        --- [ PRESENTATION TIER PRIVATE SUBNETS ] ------------------
+  | Private Subnet: 10.20.3.0/24 (pvt-sn-3a)                 |        | Private Subnet: 10.20.4.0/24 (pvt-sn-4b)                 |
   |                                                          |        |                                                          |
   |   +--------------------------------------------------+   |        |   +--------------------------------------------------+   |
-  |   | Frontend EC2 Instances (React + Apache)          |   |        |   | Frontend EC2 Instances (React + Apache)          |   |
+  |   | FE-ASG Instances (React + Apache Golden AMI)     |   |        |   | FE-ASG Instances (React + Apache Golden AMI)     |   |
   |   +------------------------+-------------------------+   |        |   +------------------------+-------------------------+   |
   -----------------------------|------------------------------        -----------------------------|------------------------------
                                | Internal Backend Traffic                                          |
                                v                                                                   v
-  --- [ APPLICATION TIER (BACKEND) PRIVATE SUBNET ] ----------        --- [ APPLICATION TIER (BACKEND) PRIVATE SUBNET ] ----------
-  | Private Subnet: 10.20.5.0/24 (AZ-a)                      |        | Private Subnet: 10.20.6.0/24 (AZ-b)                      |
+  --- [ APPLICATION TIER PRIVATE SUBNETS ] -------------------        --- [ APPLICATION TIER PRIVATE SUBNETS ] -------------------
+  | Private Subnet: 10.20.5.0/24 (pvt-sn-5a)                 |        | Private Subnet: 10.20.6.0/24 (pvt-sn-6b)                 |
   |                                                          |        |                                                          |
   |   +--------------------------------------------------+   |        |   +--------------------------------------------------+   |
-  |   | Backend EC2 Instances (Node.js + Express + PM2)  |   |        |   | Backend EC2 Instances (Node.js + Express + PM2)  |   |
+  |   | BE-ASG Instances (Node.js + Express + PM2)       |   |        |   | BE-ASG Instances (Node.js + Express + PM2)       |   |
   |   +------------------------+-------------------------+   |        |   +------------------------+-------------------------+   |
   -----------------------------|------------------------------        -----------------------------|------------------------------
-                               | Private Database Query (Port 3306)                                |
+                               | Private MySQL Traffic (Port 3306 -> book.rds.com)                 |
                                +-----------------------------+-------------------------------------+
                                                              |
                                                              v
-  --- [ DATABASE TIER PRIVATE SUBNET ] -------------------------------------------------------------------------------------------
-  | Private Subnet 10.20.7.0/24 (AZ-a)                      | Private Subnet 10.20.8.0/24 (AZ-b)                              |
+  --- [ DATABASE TIER PRIVATE SUBNETS (project-3tier-sn-group) ] ------------------------------------------------------------------
+  | Private Subnet: 10.20.7.0/24 (pvt-sn-7a)                | Private Subnet: 10.20.8.0/24 (pvt-sn-8b)                         |
   |                                                          |                                                                  |
   |   +---------------------------------------------------------------------------------------------------------------------+   |
-  |   |                        AMAZON RDS MYSQL (MULTI-AZ) DATABASE CLUSTER                                                |   |
-  |   |                        DB Name: test  |  Private DNS: book.rbs.com (rbs.com zone)                                |   |
+  |   |                        AMAZON RDS MYSQL 8.0 (MULTI-AZ) DB INSTANCE (somesh-db-1)                                   |   |
+  |   |                        DB Name: test  |  Private CNAME: book.rds.com (rds.com Private Zone)                        |   |
   |   +---------------------------------------------------------------------------------------------------------------------+   |
   --------------------------------------------------------------------------------------------------------------------------------
 ```
 
 ---
 
-## 🛠️ AWS Services Used
+## 🎯 Architectural Requirements & Constraints
 
-| AWS Service | Category | Purpose in MindCircuit Architecture | Real-World Usage |
+| Requirement Metric | Target Specification | Architectural Mechanism |
+| :--- | :--- | :--- |
+| **High Availability (HA)** | 99.99% Uptime across Availability Zone outages | Multi-AZ deployment (`us-east-1a`, `us-east-1b`) with redundant ALBs and ASGs. |
+| **Security Isolation** | Zero direct internet accessibility to Database and Backend layers | Private subnets with strictly managed NAT Gateway egress and chained Security Groups. |
+| **Horizontal Scalability** | Automated capacity expansion under CPU/Memory spikes | EC2 Auto Scaling Groups (`FE-ASG`, `BE-ASG`) utilizing Launch Templates backed by Golden AMIs. |
+| **Domain Abstraction** | Zero hardcoded IP addresses or AWS-generated DNS in codebases | Public Route 53 zones for frontend/API; Private Route 53 hosted zones (`rds.com`) for internal DB routing. |
+| **Data Integrity** | ACID-compliant storage with Multi-AZ failover capability | Amazon RDS MySQL instance (`somesh-db-1`) isolated in dedicated DB Subnet Group (`project-3tier-sn-group`). |
+
+---
+
+## 🔬 34-Step Procedural Lifecycle Specification
+
+### Phase 1: Base VPC Network Infrastructure Provisioning
+
+1. **VPC Creation**: Allocate Virtual Private Cloud `3tier-vpc` with IPv4 CIDR `10.20.0.0/16` in `us-east-1` (`vpc-00d8d6beb7dcedcc4`).
+2. **DNS Enabling**: Enable DNS Hostnames and DNS Resolution options within `3tier-vpc`.
+3. **Internet Gateway Provisioning**: Create Internet Gateway `3tier-igw` (`igw-0cefa1aeac9dc78bf`).
+4. **IGW Attachment**: Attach `3tier-igw` explicitly to `3tier-vpc`.
+5. **Subnet 1 Allocation (`pub-sn-1a`)**: Create Public Subnet `10.20.1.0/24` in `us-east-1a`.
+6. **Subnet 2 Allocation (`pub-sn-2b`)**: Create Public Subnet `10.20.2.0/24` in `us-east-1b`.
+7. **Subnet 3 Allocation (`pvt-sn-3a`)**: Create Private Application Subnet `10.20.3.0/24` in `us-east-1a`.
+8. **Subnet 4 Allocation (`pvt-sn-4b`)**: Create Private Application Subnet `10.20.4.0/24` in `us-east-1b`.
+9. **Subnet 5 Allocation (`pvt-sn-5a`)**: Create Private Database Subnet `10.20.5.0/24` in `us-east-1a`.
+10. **Subnet 6 Allocation (`pvt-sn-6b`)**: Create Private Database Subnet `10.20.6.0/24` in `us-east-1b`.
+11. **Subnet 7 Allocation (`pvt-sn-7a`)**: Create Private Auxiliary Subnet `10.20.7.0/24` in `us-east-1a`.
+12. **Subnet 8 Allocation (`pvt-sn-8b`)**: Create Private Auxiliary Subnet `10.20.8.0/24` in `us-east-1b`.
+13. **Public Route Table Allocation**: Create route table `3tier-pub-rt` (`rtb-03d97e0a2a90a1d5d`).
+14. **Public Route Rule Insertion**: Add default route `0.0.0.0/0` targeting Internet Gateway `3tier-igw`.
+15. **Public Subnet Associations**: Bind `pub-sn-1a` and `pub-sn-2b` to `3tier-pub-rt`.
+16. **NAT Gateway Elastic IP Allocation**: Allocate Elastic IPs (`44.219.12.60`, `34.196.224.75`).
+17. **NAT Gateway Provisioning**: Deploy Managed NAT Gateway `3tier-NAT` (`nat-1a6de1fc802c628cb`) inside `pub-sn-1a`.
+18. **Private Route Table Allocation**: Create private route table `3tier-pvt-rt` (`rtb-06ac5e2ec32235e6b`).
+19. **Private Egress Route Rule Insertion**: Add default route `0.0.0.0/0` targeting NAT Gateway `3tier-NAT`.
+20. **Private Subnet Associations**: Bind `pvt-sn-3a` through `pvt-sn-8b` to `3tier-pvt-rt`.
+
+---
+
+### Phase 2: Layered Security & Traffic Ingress Management
+
+21. **Layered Security Group Chaining (`3tier-SG` / `sg-0f303e0d9127a694d`)**:
+    - `frontend-alb-sg`: Permits HTTP (80) & HTTPS (443) from `0.0.0.0/0`.
+    - `frontend-ec2-sg`: Permits HTTP (80) strictly from `frontend-alb-sg`.
+    - `backend-alb-sg`: Permits HTTP (80) & API traffic strictly from `frontend-ec2-sg`.
+    - `backend-ec2-sg`: Permits Node API traffic (8080) strictly from `backend-alb-sg`.
+    - `db-sg`: Permits MySQL traffic (port 3306) strictly from `backend-ec2-sg` and `backend-alb-sg`.
+22. **Target Group Allocation (`frontend-TG` & `backend-TG`)**: Configure active HTTP health checks targeting path `/` with status code `200`.
+23. **Application Load Balancers Provisioning**:
+    - `frontend-ALB`: Internet-facing ALB in `pub-sn-1a` & `pub-sn-2b`.
+    - `backend-ALB`: Internal ALB in `pvt-sn-3a` & `pvt-sn-4b`.
+24. **ACM SSL Certificate Provisioning**: Issue wildcard TLS 1.3 certificate `*.rebel7781.xyz` (`arn:aws:acm:us-east-1:595028889753:certificate/efc8d6a9-e71a-4f73-8296-30f75be1651a`).
+25. **Public Route 53 Zone Setup**: Provision public hosted zone `rebel7781.xyz`.
+26. **Public Record Mapping**:
+    - `virat.rebel7781.xyz` $\rightarrow$ A Record Alias to `frontend-ALB` (`dualstack.frontend-alb-568472738.us-east-1.elb.amazonaws.com`).
+    - `api.rebel7781.xyz` $\rightarrow$ A Record Alias to `backend-ALB` (`dualstack.backend-alb-1878050688.us-east-1.elb.amazonaws.com`).
+
+---
+
+### Phase 3: Database, Staging Compute & Auto Scaling Infrastructure
+
+27. **RDS DB Subnet Group Provisioning**: Create DB Subnet Group `project-3tier-sn-group` spanning private database subnets.
+28. **Amazon RDS MySQL Provisioning**: Provision RDS MySQL 8.0 instance `somesh-db-1` (`db.t3.micro`, Master User `admin`, Password `"Somesh12345"`, DB `test`).
+29. **Staging Build EC2 Fleet Provisioning**: Launch temporary build instances (`frontend-server` `i-0a60510b98916840f`, `backend-server` `i-04d547ca31ba9125a`).
+30. **Staging Automation & Golden AMI Creation**: Execute staging UserData scripts to compile React frontend and Node backend runtimes, then create immutable Golden AMIs `frontend-AMI` (`ami-0e826fcb0c13a348`) and `backend-AMI` (`ami-0cf2ba10137800b5a`).
+31. **EC2 Launch Templates Provisioning**: Configure versioned Launch Templates `frontend-LT` (`lt-043b4c9f97cde6ab`) and `backend-LT` (`lt-0ds8df3cee792a2b6`).
+32. **Auto Scaling Groups Deployment**: Deploy `FE-ASG` and `BE-ASG` across `us-east-1a` and `us-east-1b` with health checks bound to respective ALBs.
+
+---
+
+### Phase 4: Private DNS Mapping & Dynamic System Validation
+
+33. **Route 53 Private Hosted Zone Abstraction**: Create Private Hosted Zone `rds.com` attached to `3tier-vpc` with CNAME `book.rds.com` pointing to `somesh-db-1.c41ks4oo8yhh.us-east-1.rds.amazonaws.com`.
+34. **End-to-End System Validation**: Access web storefront at `https://virat.rebel7781.xyz`, execute full CRUD operations, and verify real-time relational persistence in MySQL DB.
+
+---
+
+## 🛠️ AWS Services Inventory & Micro-Segmented Security
+
+| AWS Service | Category | Purpose in Architecture | Real-World Production Specification |
 | :--- | :--- | :--- | :--- |
-| **Amazon VPC** | Networking | Virtual private cloud enclosure | Isolated network (`10.20.0.0/16`) spanning AZ-a and AZ-b. |
-| **Public Subnets** | Networking | Ingress for Load Balancers & NAT | Hosts Public Subnets `10.20.1.0/24` (AZ-a) and `10.20.2.0/24` (AZ-b). |
-| **Private Subnets** | Networking | Workload isolation | Segregates Frontend (`10.20.3.0/24`, `10.20.4.0/24`), Backend (`10.20.5.0/24`, `10.20.6.0/24`), and DB (`10.20.7.0/24`, `10.20.8.0/24`). |
-| **Internet Gateway** | Networking | External internet entrypoint | Connects Public Subnets directly to external user traffic. |
-| **NAT Gateway** | Networking | Outbound outbound egress | Redundant NAT Gateways in `10.20.1.0/24` & `10.20.2.0/24` for OS updates. |
-| **Application Load Balancer (ALB)** | Networking | Layer 7 load balancing | **Frontend ALB** (`virat.rebel7781.xyz`) & **Backend ALB** (`api.rebel7781.xyz`). |
-| **Amazon EC2 (Frontend)** | Compute | Presentation Tier nodes | Serves React UI static content via Apache Web Server in private subnets. |
-| **Amazon EC2 (Backend)** | Compute | Application Tier nodes | Executes Node.js + Express API microservices managed by PM2 process manager. |
-| **Amazon RDS MySQL** | Database | Multi-AZ Relational Storage | Managed MySQL DB Cluster (DB Name: `test`) with auto-failover in `10.20.7.0/24` & `10.20.8.0/24`. |
-| **Route 53 Public Zone** | DNS | Domain routing for external users | Resolves `rebel7781.xyz` (`virat.rebel7781.xyz` & `api.rebel7781.xyz`). |
-| **Route 53 Private Zone** | DNS | Internal private DNS resolution | Resolves `rbs.com` internal zone (`book.rbs.com` -> RDS Endpoint). |
-| **Auto Scaling Group** | Compute | Elastic compute capacity | Auto-scales EC2 nodes based on CPU & traffic load across AZ-a and AZ-b. |
-| **AWS ACM** | Security | SSL/TLS Certificate Manager | Manages HTTPS TLS 1.3 certificates for ALB listeners. |
-| **Security Groups** | Security | Stateful micro-segmentation | Controls port-level ingress (`80`, `443`, `8080`, `3306`) between tiers. |
-| **Network ACLs** | Security | Stateless subnet boundary security | Subnet-level network filtering acting as defense-in-depth. |
-| **Amazon CloudWatch** | Monitoring | Log & metric monitoring | Centralizes CPU, memory, disk, network metrics, and logs. |
-| **AWS CLI** | Management | Cloud automation scripting | Programmatic deployment and infrastructure management. |
+| **Amazon VPC** | Networking | Virtual private cloud enclosure | Dedicated `3tier-vpc` (`10.20.0.0/16`) spanning `us-east-1a` and `us-east-1b`. |
+| **Public Subnets** | Networking | Ingress for Load Balancers & NAT | `pub-sn-1a` (`10.20.1.0/24`) & `pub-sn-2b` (`10.20.2.0/24`). |
+| **Private Subnets** | Networking | Private workload isolation | Presentation (`10.20.3.0/24`, `10.20.4.0/24`), Application (`10.20.5.0/24`, `10.20.6.0/24`), DB (`10.20.7.0/24`, `10.20.8.0/24`). |
+| **Internet Gateway** | Networking | Public Internet Entrypoint | `3tier-igw` (`igw-0cefa1aeac9dc78bf`) attached to `3tier-vpc`. |
+| **NAT Gateway** | Networking | Private subnet egress updates | `3tier-NAT` (`nat-1a6de1fc802c628cb`) in `pub-sn-1a` with Elastic IPs (`44.219.12.60`, `34.196.224.75`). |
+| **Application Load Balancers** | Load Balancing | Layer-7 Ingress Management | **frontend-ALB** (`virat.rebel7781.xyz`) & **backend-ALB** (`api.rebel7781.xyz`). |
+| **EC2 Golden AMIs** | Compute | Immutable Instance State | `frontend-AMI` (`ami-0e826fcb0c13a348`) & `backend-AMI` (`ami-0cf2ba10137800b5a`). |
+| **Launch Templates** | Compute | Standardized Compute Spec | `frontend-LT` (`lt-043b4c9f97cde6ab`) & `backend-LT` (`lt-0ds8df3cee792a2b6`). |
+| **Auto Scaling Groups** | Compute | Elastic Compute Capacity | `FE-ASG` and `BE-ASG` operating across multiple Availability Zones. |
+| **Amazon RDS MySQL** | Relational DB | Multi-AZ Relational Data Tier | `somesh-db-1` (MySQL 8.0, DB: `test`) in `project-3tier-sn-group`. |
+| **Route 53 Public Zone** | Edge / DNS | Public Domain Routing | `rebel7781.xyz` mapping `virat` and `api` endpoints. |
+| **Route 53 Private Zone** | Edge / DNS | Internal DB Abstraction | `rds.com` zone mapping `book.rds.com` to dynamic RDS endpoint. |
+| **AWS ACM** | Security | TLS 1.3 Certificate Manager | Wildcard certificate `*.rebel7781.xyz`. |
+| **Security Groups** | Security | Stateful Micro-Segmentation | `3tier-SG` (`sg-0f303e0d9127a694d`) chaining tier-to-tier ingress. |
 
 ---
 
-## 🌐 Network Architecture
+## 📜 UserData & Boot Automation Scripts
 
-The network layout uses the dedicated **`10.20.0.0/16`** CIDR block structured as follows:
-
-```
-VPC CIDR: 10.20.0.0/16
-├── Public Subnet 10.20.1.0/24 (AZ-a)  --> NAT Gateway 1A, Public ALB Listener
-├── Public Subnet 10.20.2.0/24 (AZ-b)  --> NAT Gateway 1B, Public ALB Listener
-├── Private Subnet 10.20.3.0/24 (AZ-a) --> Presentation Tier (React + Apache)
-├── Private Subnet 10.20.4.0/24 (AZ-b) --> Presentation Tier (React + Apache)
-├── Private Subnet 10.20.5.0/24 (AZ-a) --> Application Tier (Node.js + Express + PM2)
-├── Private Subnet 10.20.6.0/24 (AZ-b) --> Application Tier (Node.js + Express + PM2)
-├── Private Subnet 10.20.7.0/24 (AZ-a) --> Database Tier (Amazon RDS MySQL Master)
-└── Private Subnet 10.20.8.0/24 (AZ-b) --> Database Tier (Amazon RDS MySQL Standby)
-```
-
-### 📍 Route 53 DNS Architecture
-
-1. **Public Hosted Zone (`rebel7781.xyz`)**:
-   - `virat.rebel7781.xyz` $\rightarrow$ Frontend Application Load Balancer
-   - `api.rebel7781.xyz` $\rightarrow$ Backend Application Load Balancer
-2. **Private Hosted Zone (`rbs.com`)**:
-   - `book.rbs.com` $\rightarrow$ Amazon RDS MySQL Endpoint (DB Name: `test`)
-
----
-
-## ⚡ High Availability Design
-
-- **Multi-AZ Deployment**: EC2 fleets and RDS DB nodes are deployed across `us-east-1a` and `us-east-1b`.
-- **Dual Load Balancers**: Separate **Frontend ALB** and **Backend ALB** ensure microservices isolation.
-- **Target Group Health Checks**: Active `/healthz` HTTP probes check node status every 15 seconds.
-- **RDS Multi-AZ Failover**: Automatic synchronous replication to standby node in `10.20.8.0/24` with 60-second DNS failover.
-
----
-
-## 🔒 Security Architecture
-
-- **Private Subnet Placement**: All Frontend EC2s, Backend EC2s, and RDS MySQL DB nodes run inside isolated private subnets with zero direct public internet exposure.
-- **Tier-to-Tier Ingress Rules**:
-  - `Frontend-SG`: Accepts traffic only from `Frontend-ALB` on HTTP/HTTPS.
-  - `Backend-SG`: Accepts traffic only from `Backend-ALB` on port `8080`.
-  - `DB-SG`: Accepts MySQL traffic (port `3306`) strictly from `Backend-SG`.
-- **Egress Control**: Private nodes access external APIs/updates exclusively via **NAT Gateways** (`10.20.1.0/24` & `10.20.2.0/24`).
-
----
-
-## 💾 Storage Layer
-
-- **Amazon EBS**: Encrypted `gp3` root volumes for Frontend & Backend EC2 nodes.
-- **Amazon RDS MySQL**: Multi-AZ storage auto-scaling up to 500GB with automated daily snapshots and 35-day Point-In-Time Recovery (PITR).
-
----
-
-## 📊 Monitoring & Observability
-
-- **CloudWatch Dashboards**: Metrics tracking CPU Utilization, ALB Request Counts, 5XX errors, and MySQL active DB connections.
-- **PM2 Log Management**: Real-time process logging and automatic restarts for backend Node.js services.
-
----
-
-## 🚀 Deployment Workflow
-
-```
-Developer Push ──> GitHub ──> Build ──> Launch Template ──> ASG ──> Frontend / Backend ALB ──> EC2 ──> RDS MySQL
-```
-
----
-
-## 💻 AWS CLI Commands
-
-<details>
-<summary><b>Click to view AWS CLI Reference Commands for 10.20.0.0/16 Network</b></summary>
-
+### 1. Staging Frontend UserData Script (`user_data_web.sh`)
 ```bash
-# Describe VPC Subnets in 10.20.0.0/16 network
-aws ec2 describe-subnets \
-  --filters "Name=vpc-id,Values=vpc-10200000" \
-  --query "Subnets[*].[SubnetId,CidrBlock,AvailabilityZone,Tags[?Key=='Name'].Value|[0]]" \
-  --output table
+#!/bin/bash
+sudo apt update -y
+sudo apt install apache2 -y
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt update -y
+sudo npm install -g corepack
+corepack enable
+corepack prepare yarn@stable --activate
+sudo npm install -g pm2
 
-# Verify RDS MySQL Multi-AZ Status
-aws rds describe-db-instances \
-  --db-instance-identifier banking-prod-db \
-  --query "DBInstance.[DBInstanceIdentifier,DBName,Endpoint.Address,MultiAZ,DBInstanceStatus]"
+# Clone repository & set API Base URL
+cd /tmp
+git clone https://github.com/jadalaramani/aws_three_tier_code.git
+cd aws_three_tier_code/client
 
-# Query Route 53 Resource Record Sets for rebel7781.xyz
-aws route53 list-resource-record-sets \
-  --hosted-zone-id Z1234567890 \
-  --query "ResourceRecordSets[?Name=='virat.rebel7781.xyz.' || Name=='api.rebel7781.xyz.']"
+export const API_BASE_URL = "https://api.rebel7781.xyz";
+
+npm install
+npm run build
+sudo rm -rf /var/www/html/*
+sudo cp -r build/* /var/www/html/
+sudo systemctl enable apache2
+sudo systemctl restart apache2
 ```
 
-</details>
-
----
-
-## 🐧 Linux Administration
-
+### 2. Staging Backend UserData Script (`user_data_app.sh`)
 ```bash
-# PM2 Process Manager Commands (Application Tier)
-pm2 status
-pm2 logs backend-api
-pm2 restart backend-api
+#!/bin/bash
+sudo apt update -y
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo apt update -y
+sudo npm install -g corepack
+corepack enable
+corepack prepare yarn@stable --activate
+sudo npm install -g pm2
 
-# Network Socket Auditing on Backend (Port 8080 / 3306)
-ss -tulnp | grep 8080
-lsof -i :8080
+cd /tmp
+git clone https://github.com/jadalaramani/aws_three_tier_code.git
+cd aws_three_tier_code/backend
 
-# Systemd & Journalctl Logging
-systemctl status apache2
-journalctl -u nodejs-api -n 50 --no-pager
+cat << 'EOF' > .env
+DB_HOST=book.rds.com
+DB_USERNAME=admin
+DB_PASSWORD="Somesh12345"
+PORT=3306
+EOF
+
+npm install
+npm install dotenv
+npm install mysql2
+pm2 start index.js --name "backendapi"
+pm2 startup
+pm2 save
 ```
+
+### 3. Frontend Launch Template UserData Script (ASG Boot Automation)
+```bash
+#!/bin/bash
+sudo apt update -y
+sleep 90
+sudo systemctl start apache2.service
+```
+
+### 4. Backend Launch Template UserData Script (ASG Boot Automation)
+```bash
+#!/bin/bash
+sudo apt update -y
+sudo pm2 startup
+sudo env PATH=$PATH:/usr/bin /usr/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+sudo systemctl start pm2-root
+sudo systemctl enable pm2-root
+sudo apt install mysql-server -y
+cd /home/ubuntu/aws_three_tier_code/backend
+sudo pm2 start index.js --name "backendapi"
+mysql -h book.rds.com -u admin -pSomesh12345 test < test.sql
+```
+
 
 ---
 
-## 🔧 DevOps Troubleshooting
+## 🔧 DevOps & Operational Troubleshooting Runbook
 
-| # | Issue | Symptoms | Root Cause | Resolution Strategy |
+| # | Issue | Observed Symptoms | Root Cause | Resolution Strategy |
 | :---: | :--- | :--- | :--- | :--- |
-| 1 | **RDS Connection Timeout** | Backend logs `ETIMEDOUT` to `book.rbs.com` | `DB-SG` missing ingress rule for `Backend-SG` on port 3306. | Update MySQL SG to allow port 3306 from `Backend-SG` (`10.20.5.0/24`, `10.20.6.0/24`). |
-| 2 | **502 Bad Gateway** | `virat.rebel7781.xyz` returns 502 | Apache/React server crashed in `10.20.3.0/24`. | Check Apache service (`systemctl status apache2`), verify port 80 bound. |
-| 3 | **DNS Resolution Failure** | Cannot resolve `book.rbs.com` | Private Hosted Zone `rbs.com` not associated with VPC `10.20.0.0/16`. | Associate `rbs.com` Private Hosted Zone to VPC `10.20.0.0/16`. |
-| 4 | **NAT Gateway Egress Failure** | Private EC2 cannot fetch `apt-get` updates | Route table for `10.20.3.0/24` missing `0.0.0.0/0` -> NAT GW. | Add route `0.0.0.0/0` -> NAT Gateway in private route table. |
+| 1 | **RDS Connection Timeout** | Backend API logs `ETIMEDOUT` connection error | `db-sg` missing ingress rule for `backend-ec2-sg` on port `3306`. | Update `db-sg` to allow port `3306` strictly from `backend-ec2-sg`. |
+| 2 | **502 Bad Gateway** | `virat.rebel7781.xyz` returns 502 Bad Gateway | Apache2 service stopped on frontend EC2 instance. | Execute `sudo systemctl restart apache2.service` via AWS SSM. |
+| 3 | **Private DNS Resolution Failure** | Backend cannot resolve `book.rds.com` | Private Hosted Zone `rds.com` not attached to VPC `3tier-vpc`. | Associate `rds.com` Private Hosted Zone with VPC `3tier-vpc` (`vpc-00d8d6beb7dcedcc4`). |
+| 4 | **NAT Egress Failure** | Private EC2 cannot perform `apt update` | Route table `3tier-pvt-rt` missing route `0.0.0.0/0` $\rightarrow$ `3tier-NAT`. | Add route `0.0.0.0/0` targeting `3tier-NAT` (`nat-1a6de1fc802c628cb`) in `3tier-pvt-rt`. |
 
 ---
 
-## 📂 Folder Structure
+## 📂 Repository Directory Structure
 
 ```
 AWS_CLOUD/
-├── .github/
-│   └── workflows/
-│       └── ci-cd-pipeline.yml         # GitHub Actions deployment automation
 ├── assets/
-│   └── aws_banner.png                 # MindCircuit Book Store 3-Tier Architecture Diagram
+│   └── aws_banner.png                 # Mindcircuit Book Store 3-Tier Architecture Diagram
 ├── app/
 │   ├── api/
-│   │   ├── package.json               # Backend Node.js service dependencies
-│   │   └── server.js                  # Express API server & health check endpoints
+│   │   ├── package.json               # Mindcircuit Book Store Express API dependencies
+│   │   └── server.js                  # Express API server connecting to book.rds.com
 │   ├── web/
-│   │   ├── nginx.conf                 # Apache / Nginx reverse proxy config
-│   │   └── index.html                 # Frontend React presentation landing page
+│   │   ├── nginx.conf                 # Nginx/Apache presentation proxy routing
+│   │   └── index.html                 # Mindcircuit Book Store React UI presentation page
 │   └── db/
-│       └── schema.sql                 # MySQL initial database table schema (DB: test)
+│       └── schema.sql                 # MySQL schema & initial seed data for test database
 ├── infrastructure/
 │   ├── scripts/
-│   │   ├── user_data_web.sh           # Frontend React + Apache user-data
-│   │   └── user_data_app.sh           # Backend Node.js + Express + PM2 user-data
+│   │   ├── user_data_web.sh           # Automated frontend staging build script
+│   │   └── user_data_app.sh           # Automated backend staging build script
 │   ├── vpc/
-│   │   └── main.tf                    # VPC 10.20.0.0/16 & Subnet layout IaC
+│   │   └── main.tf                    # 3tier-vpc (10.20.0.0/16) layout IaC
 │   ├── alb/
-│   │   └── alb.tf                     # Frontend & Backend ALB Terraform module
+│   │   └── alb.tf                     # frontend-ALB & backend-ALB Terraform module
 │   ├── ec2/
-│   │   └── auto_scaling.tf            # ASG policies & Launch Templates
+│   │   └── auto_scaling.tf            # Launch Templates (frontend-LT/backend-LT) & ASGs
 │   └── rds/
-│       └── rds_multi_az.tf            # Amazon RDS MySQL Multi-AZ cluster (DB: test)
+│       └── rds_multi_az.tf            # Amazon RDS MySQL somesh-db-1 & project-3tier-sn-group
 ├── monitoring/
-│   └── cloudwatch_dashboard.json      # CloudWatch centralized metrics dashboard
+│   └── cloudwatch_dashboard.json      # CloudWatch metrics dashboard for FE-ASG & BE-ASG
 ├── docs/
 │   └── runbooks/
 │       ├── incident_response.md       # Incident response runbook
-│       └── disaster_recovery.md        # RDS failover runbook
-└── README.md                          # Master Enterprise Documentation
+│       └── disaster_recovery.md        # RDS failover & PITR runbook
+└── README.md                          # Master Enterprise Monograph Documentation
 ```
 
 ---
 
-## ⭐ Key Features
+## 🧠 Enterprise Skills Demonstrated
 
-- 🟢 **High Availability**: Multi-AZ deployment across `us-east-1a` & `us-east-1b`.
-- ⚡ **Auto Scaling**: Elastic compute scaling for React & Node.js tiers.
-- ⚖️ **Dual ALB Traffic Routing**: Separate Frontend ALB (`virat.rebel7781.xyz`) & Backend ALB (`api.rebel7781.xyz`).
-- 🗺️ **Dual Route 53 Zones**: Public Hosted Zone (`rebel7781.xyz`) & Private Hosted Zone (`rbs.com`).
-- 🗄️ **Managed MySQL Multi-AZ**: Amazon RDS MySQL (DB Name: `test`, Endpoint: `book.rbs.com`).
-- 🔒 **Zero Public Workload Exposure**: All EC2 & DB instances isolated in Private Subnets (`10.20.3.0/24` - `10.20.8.0/24`).
-
----
-
-## 🧠 Skills Demonstrated
-
-The following enterprise skills, AWS Console management workflows, and Linux administration capabilities are fully implemented and demonstrated in this repository:
-
-<details open>
-<summary><b>1. ☁️ AWS Networking & Core Infrastructure Skills</b></summary>
-
-- 📐 **AWS Architecture Diagram**: End-to-end design of 3-tier, multi-AZ enterprise cloud architecture following AWS Well-Architected Framework.
-- 🏢 **VPC Dashboard**: Provisioning virtual private cloud topologies, IPv4 CIDR allocation (`10.20.0.0/16`), and DNS hostnames.
-- 🔀 **Public & Private Subnets**: Micro-segmenting public subnets (`10.20.1.0/24`, `10.20.2.0/24`) and private subnets (`10.20.3.0/24` to `10.20.8.0/24`).
-- 🛣️ **Route Tables**: Managing public IGW default routing and private NAT Gateway egress route tables across multiple Availability Zones.
-- 🌍 **Internet Gateway (IGW)**: Attaching IGW for public subnet internet access and Application Load Balancer entrypoints.
-- 🛰️ **NAT Gateway**: Deploying redundant NAT Gateways in `10.20.1.0/24` & `10.20.2.0/24` for outbound private subnet connectivity.
-- 🛡️ **Security Groups**: Authorizing stateful micro-segmented firewall rules at the EC2, ALB, and RDS interface levels.
-- 🔒 **Network ACLs (NACLs)**: Enforcing stateless subnet-boundary security policies for network isolation.
-
-</details>
-
-<details open>
-<summary><b>2. 💻 Compute, Elasticity & Traffic Engineering Skills</b></summary>
-
-- 🖥️ **EC2 Instances**: Provisioning stateless Frontend (React + Apache) and Backend (Node.js + Express + PM2) EC2 fleets across `us-east-1a` and `us-east-1b`.
-- 📀 **AMIs (Amazon Machine Images)**: Automated Golden AMI creation pre-configured with security patches and application runtimes.
-- 📜 **Launch Template**: Versioning Launch Templates standardizing instance types, IAM profiles, and user-data boot scripts.
-- 📈 **Auto Scaling Group (ASG)**: Dynamic target-tracking scaling policies, instance refresh automation, and rolling deployments.
-- ⚖️ **Load Balancers (Frontend & Backend ALB)**: Dual Layer-7 Load Balancers routing `virat.rebel7781.xyz` and `api.rebel7781.xyz`.
-- 🩺 **Target Group Health Checks**: Active `/healthz` HTTP health probes (15s interval, 3 consecutive check threshold for deregistration).
-
-</details>
-
-<details open>
-<summary><b>3. 🌐 Edge, DNS, Security & Delivery Skills</b></summary>
-
-- 🗺️ **Route 53 Hosted Zones**: Public Hosted Zone (`rebel7781.xyz`) and Private Hosted Zone (`rbs.com`).
-- 🔐 **ACM Certificate**: Provisioning, attaching, and automatically renewing SSL/TLS 1.3 certificates via AWS Certificate Manager.
-- ⚡ **CloudFront Distribution**: Global edge caching and static asset distribution integrated with AWS WAF for perimeter defense.
-
-</details>
-
-<details open>
-<summary><b>4. 💾 Database, Storage & Identity Skills</b></summary>
-
-- 🗄️ **RDS Instance**: Amazon RDS MySQL Multi-AZ DB Cluster (DB Name: `test`, Endpoint: `book.rbs.com`).
-- 📂 **RDS Subnet Group**: Restricting database instances strictly inside isolated private DB subnets (`10.20.7.0/24` & `10.20.8.0/24`).
-- 📁 **EFS File System**: Provisioning shared POSIX-compliant Amazon Elastic File System (EFS) mounted across multi-AZ EC2 fleets.
-- 👤 **IAM Users, Groups & Roles**: Enforcing Least Privilege access, role-based EC2 instance profiles, and strict IAM policies.
-
-</details>
-
-<details open>
-<summary><b>5. 📊 Observability, Governance & Terminal Administration Skills</b></summary>
-
-- 📊 **CloudWatch Dashboard**: Centralizing CPU, memory, disk, network metrics, and custom log alarm notifications.
-- 🕵️ **CloudTrail Event History**: Auditing management and data API calls across the AWS account for compliance and forensics.
-- 🖥️ **AWS CLI Terminal Output**: Operational scripting and administration using `aws ec2`, `aws elbv2`, `aws autoscaling`, `aws rds`, and `aws cloudwatch`.
-- 🐧 **Linux Terminal (PM2, systemctl, journalctl, ss, lsof)**: Process management with PM2 (`pm2 status`, `pm2 logs`), service orchestration (`systemctl`), and port auditing (`ss -tulnp`, `lsof`).
-
-</details>
-
----
-
-## 🔮 Future Improvements
-
-- 🏗️ **Full Terraform & CloudFormation Provisioning**: Modularize 100% of infrastructure as code.
-- 📦 **Containerization with Docker**: Containerize API services for uniform dev/prod environments.
-- ☸️ **Amazon EKS Migration**: Migrate EC2 app tiers to Kubernetes (EKS) with Helm charts.
-- 🤖 **GitOps CI/CD Pipelines**: Implement automated GitOps workflows via AWS CodePipeline or Jenkins.
+- ☁️ **AWS Cloud Networking**: VPC design (`10.20.0.0/16`), multi-AZ subnet partitioning, route table associations, IGW, and Managed NAT Gateway egress routing.
+- 🔒 **Zero-Trust Security**: Stateful Security Group chaining, stateless NACLs, and private subnet isolation preventing public access to databases.
+- ⚖️ **Traffic Engineering**: Dual Layer-7 Load Balancers (`frontend-ALB` & `backend-ALB`), ACM SSL certificate management, and Route 53 public/private DNS routing.
+- 🔄 **Elasticity & Automation**: Immutable Golden AMIs (`frontend-AMI`, `backend-AMI`), Launch Templates, Auto Scaling Groups, and bash UserData bootstrap scripts.
+- 🗄️ **Relational Database Administration**: Amazon RDS MySQL Multi-AZ provisioning, DB Subnet Groups, Private Hosted Zone CNAME abstraction (`book.rds.com`), and SQL schema restoration.
+- 🐧 **Linux Systems & Process Management**: Systemd service management, PM2 process administration, Node.js API development, and Nginx/Apache reverse proxy configuration.
 
 ---
 
 <div align="center">
 
-### 👨‍💻 Maintained by Senior Cloud & DevOps Engineering Team
-
-*Crafted with best practices from the AWS Well-Architected Framework.*
+### 👨‍💻 Maintained & Authored by Tarra Someswararao
+*Designed and implemented following AWS Well-Architected Framework best practices.*
 
 </div>

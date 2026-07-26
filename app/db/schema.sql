@@ -1,32 +1,28 @@
 -- ==============================================================================
--- Enterprise Banking Platform - Initial Database Schema
--- Database Engine: PostgreSQL / MySQL
+-- Mindcircuit Book Store - Production MySQL Database Schema & Seed Data
+-- Target Database Engine: Amazon RDS MySQL 8.0 (somesh-db-1)
+-- Database Name: test | Private CNAME: book.rds.com
+-- Author: Tarra Someswararao
 -- ==============================================================================
 
-CREATE TABLE IF NOT EXISTS customers (
-    customer_id VARCHAR(64) PRIMARY KEY,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    phone_number VARCHAR(30),
-    status VARCHAR(20) DEFAULT 'ACTIVE',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE DATABASE IF NOT EXISTS test;
+USE test;
+
+-- Drop table if existing for idempotency
+DROP TABLE IF EXISTS books;
+
+-- Create Books Catalog Table
+CREATE TABLE books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    `desc` TEXT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    cover VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS accounts (
-    account_number VARCHAR(32) PRIMARY KEY,
-    customer_id VARCHAR(64) REFERENCES customers(customer_id),
-    account_type VARCHAR(30) CHECK (account_type IN ('CHECKING', 'SAVINGS', 'INVESTMENT')),
-    balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
-    currency VARCHAR(3) DEFAULT 'USD',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS audit_logs (
-    log_id BIGSERIAL PRIMARY KEY,
-    account_number VARCHAR(32),
-    action VARCHAR(50) NOT NULL,
-    amount NUMERIC(15, 2),
-    performed_by VARCHAR(100),
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+-- Seed Initial Book Catalog Records (Empirically Verified in Production Thesis)
+INSERT INTO books (title, `desc`, price, cover) VALUES
+('Gamer of throne', 'this is an amazing book to read when you are free', 2343.20, NULL),
+('Fire folks', 'fire folks is ming blowing book to read it will blow your mind', 2342.30, NULL),
+('Ulysses', 'First edition of Ulysses by James Joyce, published by Paris-Shakespeare, 1922. The colour of the cover was meant to match the blue of the Greek flag.', 243.00, 'https://upload.wikimedia.org/wikipedia/commons/a/ab/JoyceUlysses2.jpg');

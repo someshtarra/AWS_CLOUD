@@ -8,13 +8,13 @@
       "height": 6,
       "properties": {
         "metrics": [
-          [ "AWS/EC2", "CPUUtilization", "AutoScalingGroupName", "banking-web-asg" ],
-          [ "...", "banking-app-asg" ]
+          [ "AWS/EC2", "CPUUtilization", "AutoScalingGroupName", "FE-ASG" ],
+          [ "...", "BE-ASG" ]
         ],
         "period": 300,
         "stat": "Average",
         "region": "us-east-1",
-        "title": "EC2 Fleet Average CPU Utilization (%)"
+        "title": "EC2 Compute Fleet CPU Utilization (FE-ASG & BE-ASG)"
       }
     },
     {
@@ -25,13 +25,13 @@
       "height": 6,
       "properties": {
         "metrics": [
-          [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "app/banking-external-alb/123456" ],
-          [ ".", "HTTPCode_Target_5XX_Count", ".", "." ]
+          [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "app/frontend-ALB/568472738" ],
+          [ "...", "app/backend-ALB/1878050688" ]
         ],
         "period": 60,
         "stat": "Sum",
         "region": "us-east-1",
-        "title": "ALB Traffic & 5XX Error Rate"
+        "title": "ALB Traffic & Ingress Performance (frontend-ALB & backend-ALB)"
       }
     }
   ]

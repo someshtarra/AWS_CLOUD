@@ -1,144 +1,224 @@
 # ==============================================================================
 # Enterprise AWS Three-Tier Architecture - VPC & Networking Module
-# VPC CIDR: 10.20.0.0/16 | Topology: MindCircuit Book Store AWS 3-Tier Architecture
+# Production VPC: 3tier-vpc (10.20.0.0/16) | Region: us-east-1
+# Application: Mindcircuit Book Store | Author: Tarra Someswararao
 # ==============================================================================
+
+variable "aws_region" {
+  type    = string
+  default = "us-east-1"
+}
 
 provider "aws" {
   region = var.aws_region
 }
 
-# Master VPC Definition (10.20.0.0/16)
+# Production VPC Definition (3tier-vpc)
 resource "aws_vpc" "main" {
   cidr_block           = "10.20.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
 
   tags = {
-    Name        = "mindcircuit-prod-vpc"
+    Name        = "3tier-vpc"
     Environment = "production"
+    Owner       = "Tarra Someswararao"
     ManagedBy   = "Terraform"
   }
 }
 
-# Internet Gateway
+# Internet Gateway (3tier-igw)
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "mindcircuit-prod-igw"
+    Name = "3tier-igw"
   }
 }
 
-# Public Subnets (ALB & NAT Gateways)
-resource "aws_subnet" "public_1a" {
+# ------------------------------------------------------------------------------
+# Subnet Partitioning Across Availability Zones us-east-1a & us-east-1b
+# ------------------------------------------------------------------------------
+
+# Public Subnets (ALB & NAT Gateway Ingress/Egress)
+resource "aws_subnet" "pub_sn_1a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.20.1.0/24"
   availability_zone       = "${var.aws_region}a"
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "mindcircuit-public-subnet-1a"
+    Name = "pub-sn-1a"
+    Tier = "Public"
   }
 }
 
-resource "aws_subnet" "public_1b" {
+resource "aws_subnet" "pub_sn_2b" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.20.2.0/24"
   availability_zone       = "${var.aws_region}b"
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "mindcircuit-public-subnet-1b"
+    Name = "pub-sn-2b"
+    Tier = "Public"
   }
 }
 
-# Presentation Tier (Frontend React + Apache) Private Subnets
-resource "aws_subnet" "private_frontend_3a" {
+# Presentation & Application Tier Private Subnets
+resource "aws_subnet" "pvt_sn_3a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.20.3.0/24"
   availability_zone = "${var.aws_region}a"
 
   tags = {
-    Name = "mindcircuit-private-frontend-3a"
+    Name = "pvt-sn-3a"
+    Tier = "Private Application"
   }
 }
 
-resource "aws_subnet" "private_frontend_3b" {
+resource "aws_subnet" "pvt_sn_4b" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.20.4.0/24"
   availability_zone = "${var.aws_region}b"
 
   tags = {
-    Name = "mindcircuit-private-frontend-3b"
+    Name = "pvt-sn-4b"
+    Tier = "Private Application"
   }
 }
 
-# Application Tier (Backend Node.js + Express + PM2) Private Subnets
-resource "aws_subnet" "private_backend_5a" {
+# Database Tier Private Subnets
+resource "aws_subnet" "pvt_sn_5a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.20.5.0/24"
   availability_zone = "${var.aws_region}a"
 
   tags = {
-    Name = "mindcircuit-private-backend-5a"
+    Name = "pvt-sn-5a"
+    Tier = "Private Database"
   }
 }
 
-resource "aws_subnet" "private_backend_5b" {
+resource "aws_subnet" "pvt_sn_6b" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.20.6.0/24"
   availability_zone = "${var.aws_region}b"
 
   tags = {
-    Name = "mindcircuit-private-backend-5b"
+    Name = "pvt-sn-6b"
+    Tier = "Private Database"
   }
 }
 
-# Database Tier (Amazon RDS MySQL Multi-AZ) Private Subnets
-resource "aws_subnet" "private_db_7a" {
+# Auxiliary Tier Private Subnets
+resource "aws_subnet" "pvt_sn_7a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.20.7.0/24"
   availability_zone = "${var.aws_region}a"
 
   tags = {
-    Name = "mindcircuit-private-db-7a"
+    Name = "pvt-sn-7a"
+    Tier = "Private Auxiliary"
   }
 }
 
-resource "aws_subnet" "private_db_7b" {
+resource "aws_subnet" "pvt_sn_8b" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.20.8.0/24"
   availability_zone = "${var.aws_region}b"
 
   tags = {
-    Name = "mindcircuit-private-db-7b"
+    Name = "pvt-sn-8b"
+    Tier = "Private Auxiliary"
   }
 }
 
-# Elastic IPs for NAT Gateways
-resource "aws_eip" "nat_eip_1a" {
+# ------------------------------------------------------------------------------
+# Egress Gateway & Route Tables Configuration
+# ------------------------------------------------------------------------------
+
+# Elastic EIP for Managed NAT Gateway
+resource "aws_eip" "nat_eip" {
   domain = "vpc"
+  tags   = { Name = "3tier-NAT-EIP" }
 }
 
-resource "aws_eip" "nat_eip_1b" {
-  domain = "vpc"
-}
-
-# Redundant NAT Gateways
-resource "aws_nat_gateway" "nat_1a" {
-  allocation_id = aws_eip.nat_eip_1a.id
-  subnet_id     = aws_subnet.public_1a.id
+# Multi-AZ Managed NAT Gateway (3tier-NAT in pub-sn-1a)
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.pub_sn_1a.id
 
   tags = {
-    Name = "mindcircuit-nat-gw-1a"
+    Name = "3tier-NAT"
   }
 }
 
-resource "aws_nat_gateway" "nat_1b" {
-  allocation_id = aws_eip.nat_eip_1b.id
-  subnet_id     = aws_subnet.public_1b.id
+# Public Route Table (3tier-pub-rt -> IGW)
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
 
   tags = {
-    Name = "mindcircuit-nat-gw-1b"
+    Name = "3tier-pub-rt"
   }
+}
+
+# Private Route Table (3tier-pvt-rt -> NAT)
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gw.id
+  }
+
+  tags = {
+    Name = "3tier-pvt-rt"
+  }
+}
+
+# Route Table Associations
+resource "aws_route_table_association" "pub_1a" {
+  subnet_id      = aws_subnet.pub_sn_1a.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "pub_2b" {
+  subnet_id      = aws_subnet.pub_sn_2b.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "pvt_3a" {
+  subnet_id      = aws_subnet.pvt_sn_3a.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "pvt_4b" {
+  subnet_id      = aws_subnet.pvt_sn_4b.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "pvt_5a" {
+  subnet_id      = aws_subnet.pvt_sn_5a.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "pvt_6b" {
+  subnet_id      = aws_subnet.pvt_sn_6b.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "pvt_7a" {
+  subnet_id      = aws_subnet.pvt_sn_7a.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "pvt_8b" {
+  subnet_id      = aws_subnet.pvt_sn_8b.id
+  route_table_id = aws_route_table.private_rt.id
 }
