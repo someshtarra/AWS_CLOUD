@@ -8,11 +8,12 @@
 # 1. Frontend Application Load Balancer (frontend-ALB)
 # ------------------------------------------------------------------------------
 resource "aws_lb" "frontend_alb" {
-  name               = "frontend-ALB"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [var.frontend_alb_sg_id]
-  subnets            = [var.pub_sn_1a_id, var.pub_sn_2b_id]
+  name                       = "frontend-ALB"
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = [var.frontend_alb_sg_id]
+  subnets                    = [var.pub_sn_1a_id, var.pub_sn_2b_id]
+  drop_invalid_header_fields = true # Security hardening (CKV_AWS_131)
 
   enable_deletion_protection = false
 
@@ -60,11 +61,12 @@ resource "aws_lb_listener" "frontend_http" {
 # 2. Internal Backend Application Load Balancer (backend-ALB)
 # ------------------------------------------------------------------------------
 resource "aws_lb" "backend_alb" {
-  name               = "backend-ALB"
-  internal           = true
-  load_balancer_type = "application"
-  security_groups    = [var.backend_alb_sg_id]
-  subnets            = [var.pvt_sn_3a_id, var.pvt_sn_4b_id]
+  name                       = "backend-ALB"
+  internal                   = true
+  load_balancer_type         = "application"
+  security_groups            = [var.backend_alb_sg_id]
+  subnets                    = [var.pvt_sn_3a_id, var.pvt_sn_4b_id]
+  drop_invalid_header_fields = true # Security hardening (CKV_AWS_131)
 
   enable_deletion_protection = false
 

@@ -14,6 +14,12 @@ resource "aws_launch_template" "frontend_template" {
 
   user_data = filebase64("${path.module}/../scripts/user_data_web.sh")
 
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required" # Enforce IMDSv2 security (CKV_AWS_79)
+    http_put_response_hop_limit = 1
+  }
+
   network_interfaces {
     associate_public_ip_address = false
     security_groups             = [var.frontend_ec2_sg_id]
@@ -55,6 +61,12 @@ resource "aws_launch_template" "backend_template" {
   instance_type = "t3.micro"
 
   user_data = filebase64("${path.module}/../scripts/user_data_app.sh")
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required" # Enforce IMDSv2 security (CKV_AWS_79)
+    http_put_response_hop_limit = 1
+  }
 
   network_interfaces {
     associate_public_ip_address = false
