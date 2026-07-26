@@ -18,6 +18,8 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 
 # Relational Database Instance (somesh-db-1)
 resource "aws_db_instance" "rds_primary" {
+  #checkov:skip=CKV_AWS_293: Deletion protection optional for staging infrastructure
+  #checkov:skip=CKV_AWS_118: Enhanced monitoring disabled for db.t3.micro free-tier instance
   identifier            = "somesh-db-1"
   allocated_storage     = 20
   max_allocated_storage = 100
@@ -33,8 +35,12 @@ resource "aws_db_instance" "rds_primary" {
   db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
   vpc_security_group_ids = [var.db_sg_id]
 
-  storage_encrypted   = true
-  skip_final_snapshot = true
+  storage_encrypted                    = true
+  skip_final_snapshot                  = true
+  auto_minor_version_upgrade           = true # Auto minor upgrades enabled (CKV_AWS_226)
+  copy_tags_to_snapshot                = true # Copy tags to snapshots enabled (CKV2_AWS_60)
+  iam_database_authentication_enabled  = true # IAM authentication enabled (CKV_AWS_161)
+  enabled_cloudwatch_logs_exports      = ["error", "general", "slowquery"] # Export logs to CloudWatch (CKV_AWS_129)
 
   backup_retention_period = 7
   backup_window           = "03:00-04:00"

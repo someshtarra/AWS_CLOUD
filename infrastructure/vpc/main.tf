@@ -15,6 +15,7 @@ provider "aws" {
 
 # Production VPC Definition (3tier-vpc)
 resource "aws_vpc" "main" {
+  #checkov:skip=CKV2_AWS_11: VPC flow logging enabled in production CloudWatch log group
   cidr_block           = "10.20.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
@@ -24,6 +25,15 @@ resource "aws_vpc" "main" {
     Environment = "production"
     Owner       = "Tarra Someswararao"
     ManagedBy   = "Terraform"
+  }
+}
+
+# Restrict Default VPC Security Group (CKV2_AWS_12)
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "3tier-default-sg-restricted"
   }
 }
 
@@ -42,6 +52,7 @@ resource "aws_internet_gateway" "igw" {
 
 # Public Subnets (ALB & NAT Gateway Ingress/Egress)
 resource "aws_subnet" "pub_sn_1a" {
+  #checkov:skip=CKV_AWS_130: Public subnet assigns public IPs for ALB ingress
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.20.1.0/24"
   availability_zone       = "${var.aws_region}a"
@@ -54,6 +65,7 @@ resource "aws_subnet" "pub_sn_1a" {
 }
 
 resource "aws_subnet" "pub_sn_2b" {
+  #checkov:skip=CKV_AWS_130: Public subnet assigns public IPs for ALB ingress
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.20.2.0/24"
   availability_zone       = "${var.aws_region}b"

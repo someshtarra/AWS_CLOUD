@@ -35,6 +35,7 @@ resource "aws_launch_template" "frontend_template" {
 }
 
 resource "aws_autoscaling_group" "fe_asg" {
+  #checkov:skip=CKV_AWS_153: Tags supplied via Launch Template tag_specifications
   name                = "FE-ASG"
   vpc_zone_identifier = [var.pvt_sn_3a_id, var.pvt_sn_4b_id]
   target_group_arns   = [var.frontend_target_group_arn]
@@ -49,6 +50,12 @@ resource "aws_autoscaling_group" "fe_asg" {
   launch_template {
     id      = aws_launch_template.frontend_template.id
     version = "$Latest"
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "FE-ASG-node"
+    propagate_at_launch = true
   }
 }
 
@@ -83,6 +90,7 @@ resource "aws_launch_template" "backend_template" {
 }
 
 resource "aws_autoscaling_group" "be_asg" {
+  #checkov:skip=CKV_AWS_153: Tags supplied via Launch Template tag_specifications
   name                = "BE-ASG"
   vpc_zone_identifier = [var.pvt_sn_3a_id, var.pvt_sn_4b_id]
   target_group_arns   = [var.backend_target_group_arn]
@@ -97,5 +105,11 @@ resource "aws_autoscaling_group" "be_asg" {
   launch_template {
     id      = aws_launch_template.backend_template.id
     version = "$Latest"
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "BE-ASG-node"
+    propagate_at_launch = true
   }
 }
