@@ -13,6 +13,10 @@
 
 ---
 
+![MindCircuit Book Store - AWS 3-Tier Architecture Diagram](assets/aws_architecture.jpg)
+
+---
+
 ### 📋 Monograph & System Metadata
 | Property | Specification Value |
 | :--- | :--- |
@@ -85,6 +89,8 @@ Through rigorous isolation of public web ingress, private application compute, a
 ---
 
 ## 📐 Architecture Diagram & Network Topology
+
+![MindCircuit Book Store - AWS 3-Tier Architecture Diagram](assets/aws_architecture.jpg)
 
 ```
                                       +--------------------------------------------------------+
