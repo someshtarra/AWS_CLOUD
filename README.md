@@ -8,6 +8,7 @@
 [![High Availability](https://img.shields.io/badge/Availability-99.99%25_Multi--AZ-00d26a?style=for-the-badge&logo=statuspage&logoColor=white)](#high-availability-design)
 [![Zero-Trust Security](https://img.shields.io/badge/Security-Zero--Trust_Private_Subnets-red?style=for-the-badge&logo=shield&logoColor=white)](#security-architecture)
 [![IaC Ready](https://img.shields.io/badge/IaC-Terraform_&_CloudFormation-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)](#infrastructure-as-code)
+[![Thesis PDF](https://img.shields.io/badge/Thesis_Document-PDF_Specification-red?style=for-the-badge&logo=adobe-acrobat-reader&logoColor=white)](docs/AWS_3_Tier_Architecture_Thesis.pdf)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 ---
@@ -16,6 +17,7 @@
 | Property | Specification Value |
 | :--- | :--- |
 | **Thesis Title** | **Architectural Design, Formal Specification, and Production Implementation of an Elastic Multi-Tier Infrastructure on Amazon Web Services** |
+| **Document File** | [📄 docs/AWS_3_Tier_Architecture_Thesis.pdf](docs/AWS_3_Tier_Architecture_Thesis.pdf) |
 | **Document Format** | **19-Page Technical Monograph & Master's Thesis** |
 | **Author** | **Tarra Someswararao** |
 | **AWS System Account ID** | `595028889753` (`us-east-1`) |
@@ -33,6 +35,8 @@
 
 > [!IMPORTANT]
 > **Production Thesis Monograph Reference**: This entire repository is engineered strictly based on the formal 19-page thesis document titled **"Architectural Design, Formal Specification, and Production Implementation of an Elastic Multi-Tier Infrastructure on Amazon Web Services"** authored by **Tarra Someswararao** (AWS System Account ID: `595028889753`, Region: `us-east-1`, Published: July 2026).
+>
+> 📄 **PDF Thesis Document**: [docs/AWS_3_Tier_Architecture_Thesis.pdf](docs/AWS_3_Tier_Architecture_Thesis.pdf)
 
 ---
 
