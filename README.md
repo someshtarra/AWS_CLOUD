@@ -30,6 +30,13 @@
 
 </div>
 
+> [!IMPORTANT]
+> **Production Thesis Monograph Specification**: This repository represents the formal implementation of the 19-page Master's Thesis monograph titled **"Architectural Design, Formal Specification, and Production Implementation of an Elastic Multi-Tier Infrastructure on Amazon Web Services"** authored by **Tarra Someswararao** (AWS Account ID: `595028889753`, us-east-1).
+>
+> 📄 **Read the Full Master's Thesis Specification**: [docs/AWS_3_Tier_Architecture_Thesis.md](docs/AWS_3_Tier_Architecture_Thesis.md)
+
+---
+
 ## 📌 Table of Contents
 - [📖 Executive Abstract](#-executive-abstract)
 - [Key Architectural Contributions](#-key-architectural-contributions)
